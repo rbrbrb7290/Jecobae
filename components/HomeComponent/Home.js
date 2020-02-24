@@ -1,14 +1,6 @@
-import React, {setState, useEffect} from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  Platform,
-  ScrollView,
-  Animated,
-} from 'react-native';
-import MostVideoComponent from './MostVideoComponent';
-import palette from '../../style/palette';
+import React, {reducer} from 'react';
+import {SafeAreaView} from 'react-native';
+import MostVideo from './MostVideoComponent';
 import MainHeader from '../MainHeader';
 
 const Home = ({navigation}) => {
@@ -16,7 +8,7 @@ const Home = ({navigation}) => {
     <SafeAreaView
       style={{flex: 1, backgroundColor: '#f9f9f9', paddingHorizontal: 8}}>
       <MainHeader navigation={navigation} />
-      <MostVideoComponent navigation={navigation} />
+      <MostVideo navigation={navigation} />
     </SafeAreaView>
   );
 };

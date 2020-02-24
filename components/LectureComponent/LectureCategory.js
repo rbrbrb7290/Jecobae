@@ -10,13 +10,15 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import palette from '../../style/palette';
-import categoryList from '../../json/category';
+import category from '../../json/category';
 import {normalize} from 'react-native-elements';
 
-const data = Object.values(categoryList.lecture);
+const categoryList = Object.values(category.lecture);
+
 const Category = ({navigation}) => {
   const renderList = ({item}) => (
     <TouchableOpacity
+      activeOpacity={0.9}
       onPress={() =>
         navigation.navigate('LectureList', {
           plId: item.id,
@@ -24,7 +26,9 @@ const Category = ({navigation}) => {
         })
       }>
       <View style={style.banner}>
-        <Image source={{uri: `${item.img}`}} style={style.img} />
+        <View style={style.imgBox}>
+          <Image source={{uri: `${item.img}`}} style={style.img} />
+        </View>
         <View>
           <Text style={style.bannerTitle}>{item.name}</Text>
           <Text style={style.bannerExplain}>{item.explain}</Text>
@@ -33,10 +37,11 @@ const Category = ({navigation}) => {
     </TouchableOpacity>
   );
   return (
-    <View style={{flex: 1, backgroundColor: '#f9f9f9'}}>
+    <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
       <SafeAreaView style={style.container}>
+        <Text style={style.title}>카테고리</Text>
         <FlatList
-          data={data}
+          data={categoryList}
           renderItem={renderList}
           keyExtractor={(item, index) => index.toString()}
           showsHorizontalScrollIndicator={false}
@@ -49,32 +54,47 @@ const Category = ({navigation}) => {
 
 const style = StyleSheet.create({
   container: {
-    marginTop: 10,
-    paddingHorizontal: 10,
+    marginTop: 5,
+    paddingHorizontal: 20,
     paddingVertical: 20,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#FFFFFF',
+  },
+  title: {
+    fontSize: normalize(18),
+    fontWeight: 'bold',
+    marginBottom: 5,
   },
   banner: {
     flexDirection: 'row',
     padding: 7,
-    borderColor: palette.borderColor,
-    borderWidth: 1,
-    borderRadius: 8,
-    marginVertical: 8,
-    elevation: 1,
+    backgroundColor: palette.mainColor,
+    borderColor: palette.mainColor,
+    borderWidth: 0.4,
+    borderRadius: 15,
+    marginVertical: 5,
+  },
+  imgBox: {
+    width: 60,
+    height: 60,
+    backgroundColor: '#FFFFFF',
+    borderColor: palette.mainColor,
+    borderRadius: 50,
+    marginRight: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   bannerTitle: {
-    fontSize: normalize(18),
+    fontSize: normalize(16),
     fontWeight: 'bold',
+    color: palette.textColor,
   },
   bannerExplain: {
-    color: '#a8a8a8',
-    fontSize: normalize(12),
+    color: palette.textColor,
+    fontSize: normalize(10),
   },
   img: {
-    width: 55,
-    height: 55,
-    marginRight: 15,
+    width: 45,
+    height: 45,
   },
 });
 

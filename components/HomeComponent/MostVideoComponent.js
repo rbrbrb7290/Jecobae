@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useReducer} from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,31 @@ import {getPlayList} from '../../service/DataProcessor';
 import * as env from '../../env';
 
 const MostVideoComponent = ({navigation}) => {
+  const [playList, setPlayList] = useState(null);
+  const [pageToken, setPageToken] = useState(null);
+  const [plId] = useState(env.PL_PYTHON);
+
+  const initialState = {
+    moreList: null,
+  };
+   const [state, dispatch] = useReducer(reducer, initialState);
+
+  function reducer(state, action) {
+    switch (action.type) {
+      case 'next':
+        return {moreList: Object.assign(state.moreList, playList)};
+      default:
+        throw new Error();
+    }
+  }
+
+  const _getPlayList = async () => {
+    setPlayList(await getPlayList(plId, pageToken));
+  };
+  useEffect(() => {
+    _getPlayList();
+  }, []);
+
   const renderVideo = ({item: {title, img, desc, date, videoId}}) => (
     <TouchableHighlight
       onPress={() =>
@@ -40,16 +65,6 @@ const MostVideoComponent = ({navigation}) => {
       </View>
     </TouchableHighlight>
   );
-  const [playList, setPlayList] = useState(null);
-  const [plId] = useState(env.PL_PYTHON);
-  const [nextList] = useState(null);
-  const _getPlayList = async () => {
-    setPlayList(await getPlayList(plId));
-  };
-  useEffect(() => {
-    _getPlayList();
-  }, []);
-
   return !playList ? (
     <View
       style={{
@@ -66,24 +81,7 @@ const MostVideoComponent = ({navigation}) => {
         <Text style={style.bannerTitle}>시청 중인 강좌</Text>
         <Text style={style.date}>"마지막으로 시청한 영상들 입니다"</Text>
       </View>
-      <FlatList
-        data={playList.videoInfo}
-        renderItem={renderVideo}
-        keyExtractor={item => item.videoId}
-        showsHorizontalScrollIndicator={false}
-        horizontal={true}
-      />
-      <View style={style.bannerHeader}>
-        <Text style={style.bannerTitle}>인기 강좌</Text>
-        <Text style={style.date}>"제코베에 인기있는 영상들을 모았어요"</Text>
-      </View>
-      <FlatList
-        data={playList.videoInfo}
-        renderItem={renderVideo}
-        keyExtractor={item => item.videoId}
-        showsHorizontalScrollIndicator={false}
-        horizontal={true}
-      />
+
       <View style={style.bannerHeader}>
         <Text style={style.bannerTitle}>제코베's 강좌</Text>
         <Text style={style.date}>"제코베에서만 볼 수 있는 강좌들이에요"</Text>
@@ -94,18 +92,18 @@ const MostVideoComponent = ({navigation}) => {
         keyExtractor={item => item.videoId}
         showsHorizontalScrollIndicator={false}
         horizontal={true}
+        onScrollEndDrag={() => {
+          _getPlayList(
+            plId,
+            setPageToken(`pageToken=${playList.pageToken.nextPageToken}`),
+          );
+          dispatch({type: 'next'});
+        }}
       />
-      {/* <CheatSheet /> */}
-      {/* <View style={style.bannerHeader}>
+      <View style={style.bannerHeader}>
         <Text style={style.bannerTitle}>인기 강좌</Text>
         <Text style={style.date}>"제코베에 인기있는 영상들을 모았어요"</Text>
       </View>
-      <FlatList
-        data={playList.videoInfo}
-        renderItem={renderVideo}
-        keyExtractor={item => item.videoId}
-        horizontal={true}
-      /> */}
     </ScrollView>
   );
 };

@@ -2,6 +2,7 @@ import * as env from '../env';
 
 let category = {
   lecture: [
+    //JSON Object
     {
       name: 'HTML',
       id: env.PL_HTML,
@@ -20,7 +21,7 @@ let category = {
       name: 'JavaScript',
       id: env.PL_JS,
       img:
-        'https://icon-icons.com/icons2/2108/PNG/64/javascript_icon_130900.png',
+        'https://icon-icons.com/icons2/2107/PNG/64/file_type_js_icon_130510.png',
       explain: '"웹에 생기를 불어 넣는법"',
     },
     {
@@ -41,8 +42,8 @@ let category = {
       name: 'Data Analysis',
       id: env.PL_DATA_ANALYSIS,
       img:
-        'https://icon-icons.com/icons2/2107/PNG/64/file_type_django_icon_130645.png',
-      explain: '"장고"',
+        'https://icon-icons.com/icons2/2107/PNG/64/file_type_jupyter_icon_130494.png',
+      explain: '"데이터 분석 방법에 대해서 알아봐요"',
     },
     {
       name: 'Etc.',
