@@ -20,14 +20,20 @@ const MostVideoComponent = ({navigation}) => {
   const [plId] = useState(env.PL_PYTHON);
 
   const initialState = {
-    moreList: null,
+    moreList: [],
   };
-   const [state, dispatch] = useReducer(reducer, initialState);
+  let [state, dispatchList] = useReducer(reducer, initialState);
 
   function reducer(state, action) {
     switch (action.type) {
+      // case 'set' :
+      //   return {
+      //     playList:
+      //   };
       case 'next':
-        return {moreList: Object.assign(state.moreList, playList)};
+        return {
+          moreList: state.moreList.concat(Object.values(playList)),
+        };
       default:
         throw new Error();
     }
@@ -37,9 +43,10 @@ const MostVideoComponent = ({navigation}) => {
     setPlayList(await getPlayList(plId, pageToken));
   };
   useEffect(() => {
-    _getPlayList();
+    _getPlayList().then();
   }, []);
 
+  console.log(state.moreList);
   const renderVideo = ({item: {title, img, desc, date, videoId}}) => (
     <TouchableHighlight
       onPress={() =>
@@ -97,7 +104,7 @@ const MostVideoComponent = ({navigation}) => {
             plId,
             setPageToken(`pageToken=${playList.pageToken.nextPageToken}`),
           );
-          dispatch({type: 'next'});
+          dispatchList({type: 'next'});
         }}
       />
       <View style={style.bannerHeader}>
