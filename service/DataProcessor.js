@@ -8,6 +8,7 @@ async function getPlayList(plId, pageToken) {
     res = await _getPlayList(plId, pageToken);
   } finally {
     if (!res) {
+      return {};
     }
     return {
       pageToken: {

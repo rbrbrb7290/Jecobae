@@ -1,4 +1,5 @@
 import React from 'react';
+import {Platform} from 'react-native';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import HomeStackNavigation from './StackNavigators/HomeStackNavigation';
 import BookList from './BookComponent/BookList';
@@ -7,6 +8,7 @@ import LectureStackNavigation from './StackNavigators/LectureStackNavigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import palette from '../style/palette';
+import {normalize} from 'react-native-elements';
 
 const iconSize = 30;
 
@@ -75,6 +77,9 @@ const BottomNavi = createBottomTabNavigator(
       inactiveTintColor: '#a8a8a8',
       style: {
         backgroundColor: palette.textColor,
+        borderTopWidth: 0,
+        height: normalize(Platform.OS === 'ios' ? 40 : 45),
+        paddingVertical: 8,
       },
     },
     initialRouteName: 'Home',

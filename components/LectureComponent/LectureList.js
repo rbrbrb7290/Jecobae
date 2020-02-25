@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useReducer} from 'react';
 import {
   View,
   Text,
@@ -25,6 +25,7 @@ const LectureList = ({navigation}) => {
     setPlayList(await getPlayList(`${navigation.getParam('plId')}`, pageToken));
   };
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     _getPlayList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageToken]);
@@ -112,7 +113,7 @@ const LectureList = ({navigation}) => {
       <ActivityIndicator size="large" />
     </View>
   ) : (
-    <View style={{flex:1,backgroundColor:'#f7f7f7'}}>
+    <View style={{flex: 1, backgroundColor: '#f7f7f7'}}>
       <SafeAreaView style={{flex: 10}}>
         <FlatList
           data={playList.videoInfo}
@@ -187,7 +188,5 @@ const style = StyleSheet.create({
     paddingHorizontal: 15,
   },
 });
-
-
 
 export default LectureList;
