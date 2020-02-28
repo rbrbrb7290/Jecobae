@@ -19,34 +19,47 @@ const MostVideoComponent = ({navigation}) => {
   const [pageToken, setPageToken] = useState(null);
   const [plId] = useState(env.PL_PYTHON);
 
+  const _getPlayList = async () => {
+    setPlayList(await getPlayList(plId, pageToken));
+  };
+  useEffect(() => {
+    _getPlayList();
+    dispatchList({type: 'set'});
+  }, []);
+
   const initialState = {
+    pageToken: [],
     moreList: [],
   };
   let [state, dispatchList] = useReducer(reducer, initialState);
 
+  function arrayUnique(array) {
+    var a = array.concat();
+    for (var i = 0; i < arguments.length; ++i) {
+      for (var j = i + 1; j < arguments.length; ++j) {
+        if (a[i === a[j]]) a.splice(j--, 1);
+      }
+    }
+    return a;
+  }
+
   function reducer(state, action) {
     switch (action.type) {
-      // case 'set' :
-      //   return {
-      //     playList:
-      //   };
+      case 'set':
+        return {
+          // pageToken: playList.pageToken,
+          // moreList: playList.videoInfo,
+        };
       case 'next':
         return {
-          moreList: state.moreList.concat(Object.values(playList)),
+          pageToken: playList.pageToken,
+          moreList: arrayUnique(state.moreList.concat(playList.videoInfo)),
         };
       default:
         throw new Error();
     }
   }
 
-  const _getPlayList = async () => {
-    setPlayList(await getPlayList(plId, pageToken));
-  };
-  useEffect(() => {
-    _getPlayList().then();
-  }, []);
-
-  console.log(state.moreList);
   const renderVideo = ({item: {title, img, desc, date, videoId}}) => (
     <TouchableHighlight
       onPress={() =>
@@ -72,6 +85,10 @@ const MostVideoComponent = ({navigation}) => {
       </View>
     </TouchableHighlight>
   );
+
+  console.log(playList);
+  console.log(state.moreList);
+
   return !playList ? (
     <View
       style={{
@@ -96,7 +113,7 @@ const MostVideoComponent = ({navigation}) => {
       <FlatList
         data={playList.videoInfo}
         renderItem={renderVideo}
-        keyExtractor={item => item.videoId}
+        keyExtractor={(item, index) => index.toString()}
         showsHorizontalScrollIndicator={false}
         horizontal={true}
         onScrollEndDrag={() => {
@@ -104,12 +121,25 @@ const MostVideoComponent = ({navigation}) => {
             plId,
             setPageToken(`pageToken=${playList.pageToken.nextPageToken}`),
           );
-          dispatchList({type: 'next'});
         }}
       />
       <View style={style.bannerHeader}>
         <Text style={style.bannerTitle}>인기 강좌</Text>
         <Text style={style.date}>"제코베에 인기있는 영상들을 모았어요"</Text>
+        <FlatList
+          data={state.moreList}
+          renderItem={renderVideo}
+          keyExtractor={(item, index) => index.toString()}
+          showsHorizontalScrollIndicator={false}
+          horizontal={true}
+          // onScrollEndDrag={() => {
+          //   _getPlayList(
+          //     plId,
+          //     setPageToken(`pageToken=${state.moreList.pageToken.nextPageToken}`),
+          //   );
+          //   dispatchList({type: 'next'});
+          // }}
+        />
       </View>
     </ScrollView>
   );
