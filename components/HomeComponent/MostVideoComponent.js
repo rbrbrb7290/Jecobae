@@ -13,11 +13,12 @@ import {normalize} from 'react-native-elements';
 import palette from '../../style/palette';
 import {getPlayList} from '../../service/DataProcessor';
 import * as env from '../../env';
-const MostViewVideoList = ({navigation, plID}) => {
+
+const MostVideoComponent = ({navigation}) => {
   const [playList, setPlayList] = useState(null);
   const [pageToken, setPageToken] = useState(null);
-  const [plId] = useState(plID);
-  
+  const [plId] = useState(env.PL_PYTHON);
+
   const initialState = {
     moreList: [],
   };
@@ -45,7 +46,7 @@ const MostViewVideoList = ({navigation, plID}) => {
     _getPlayList().then();
   }, []);
 
-  // console.log(state.moreList);
+  console.log(state.moreList);
   const renderVideo = ({item: {title, img, desc, date, videoId}}) => (
     <TouchableHighlight
       onPress={() =>
@@ -82,6 +83,16 @@ const MostViewVideoList = ({navigation, plID}) => {
       <ActivityIndicator size="large" />
     </View>
   ) : (
+    <ScrollView>
+      <View style={style.bannerHeader}>
+        <Text style={style.bannerTitle}>시청 중인 강좌</Text>
+        <Text style={style.date}>"마지막으로 시청한 영상들 입니다"</Text>
+      </View>
+
+      <View style={style.bannerHeader}>
+        <Text style={style.bannerTitle}>제코베's 강좌</Text>
+        <Text style={style.date}>"제코베에서만 볼 수 있는 강좌들이에요"</Text>
+      </View>
       <FlatList
         data={playList.videoInfo}
         renderItem={renderVideo}
@@ -96,26 +107,10 @@ const MostViewVideoList = ({navigation, plID}) => {
           dispatchList({type: 'next'});
         }}
       />
-  );
-};
-const MostVideoComponent = ({navigation}) => {
-  return (
-    <ScrollView>
-      <View style={style.bannerHeader}>
-        <Text style={style.bannerTitle}>시청 중인 강좌</Text>
-        <Text style={style.date}>"마지막으로 시청한 영상들 입니다"</Text>
-      </View>
-
-      <View style={style.bannerHeader}>
-        <Text style={style.bannerTitle}>제코베's 강좌</Text>
-        <Text style={style.date}>"제코베에서만 볼 수 있는 강좌들이에요"</Text>
-      </View>
-      <MostViewVideoList navigation={navigation} plID={env.PL_PYTHON}/>
       <View style={style.bannerHeader}>
         <Text style={style.bannerTitle}>인기 강좌</Text>
         <Text style={style.date}>"제코베에 인기있는 영상들을 모았어요"</Text>
       </View>
-      <MostViewVideoList navigation={navigation} plID={env.PL_POP}/>
     </ScrollView>
   );
 };
