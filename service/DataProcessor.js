@@ -26,4 +26,4 @@ async function getPlayList(plId, pageToken) {
   }
 }
 
-export {getPlayList};
+export default getPlayList;

@@ -10,7 +10,7 @@ import {
   TouchableHighlight,
   SafeAreaView,
 } from 'react-native';
-import {getPlayList} from '../../service/DataProcessor';
+import getPlayList from '../../service/DataProcessor';
 import {normalize} from 'react-native-elements';
 import Admob from '../Admob';
 import palette from '../../style/palette';
