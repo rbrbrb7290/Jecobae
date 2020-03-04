@@ -43,7 +43,7 @@ const Category = ({navigation}) => {
         <FlatList
           data={categoryList}
           renderItem={renderList}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={item => item.name}
           showsHorizontalScrollIndicator={false}
           style={{height: '90%'}}
         />

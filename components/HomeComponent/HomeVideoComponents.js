@@ -7,24 +7,30 @@ import {
   TouchableHighlight,
   FlatList,
   ActivityIndicator,
-  ScrollView,
 } from 'react-native';
 import {normalize} from 'react-native-elements';
 import palette from '../../style/palette';
-import {getPlayList} from '../../service/DataProcessor';
+import getPlayList from '../../service/DataProcessor';
 import * as env from '../../env';
 
-const MostVideoComponent = ({navigation}) => {
+const HomeVideoComponent = ({
+  navigation,
+  playListId,
+  bannerTitle,
+  bannerDesc,
+}) => {
   const [playList, setPlayList] = useState(null);
   const [pageToken, setPageToken] = useState(null);
-  const [plId] = useState(env.PL_PYTHON);
+  const [plId] = useState(playListId);
 
   const _getPlayList = async () => {
     setPlayList(await getPlayList(plId, pageToken));
   };
   useEffect(() => {
     _getPlayList();
-    dispatchList({type: 'set'});
+    setTimeout(() => {
+      dispatchList({type: 'set'});
+    }, 1000);
   }, []);
 
   const initialState = {
@@ -33,27 +39,17 @@ const MostVideoComponent = ({navigation}) => {
   };
   let [state, dispatchList] = useReducer(reducer, initialState);
 
-  function arrayUnique(array) {
-    var a = array.concat();
-    for (var i = 0; i < arguments.length; ++i) {
-      for (var j = i + 1; j < arguments.length; ++j) {
-        if (a[i === a[j]]) a.splice(j--, 1);
-      }
-    }
-    return a;
-  }
-
   function reducer(state, action) {
     switch (action.type) {
       case 'set':
         return {
-          // pageToken: playList.pageToken,
-          // moreList: playList.videoInfo,
+          pageToken: playList.pageToken,
+          moreList: playList.videoInfo,
         };
       case 'next':
         return {
           pageToken: playList.pageToken,
-          moreList: arrayUnique(state.moreList.concat(playList.videoInfo)),
+          moreList: state.moreList.concat(playList.videoInfo),
         };
       default:
         throw new Error();
@@ -86,9 +82,6 @@ const MostVideoComponent = ({navigation}) => {
     </TouchableHighlight>
   );
 
-  console.log(playList);
-  console.log(state.moreList);
-
   return !playList ? (
     <View
       style={{
@@ -100,48 +93,28 @@ const MostVideoComponent = ({navigation}) => {
       <ActivityIndicator size="large" />
     </View>
   ) : (
-    <ScrollView>
-      <View style={style.bannerHeader}>
-        <Text style={style.bannerTitle}>시청 중인 강좌</Text>
-        <Text style={style.date}>"마지막으로 시청한 영상들 입니다"</Text>
-      </View>
-
-      <View style={style.bannerHeader}>
-        <Text style={style.bannerTitle}>제코베's 강좌</Text>
-        <Text style={style.date}>"제코베에서만 볼 수 있는 강좌들이에요"</Text>
-      </View>
+    <View style={style.bannerHeader}>
+      <Text style={style.bannerTitle}>{bannerTitle}</Text>
+      <Text style={style.date}>{bannerDesc}</Text>
       <FlatList
-        data={playList.videoInfo}
+        data={state.moreList}
         renderItem={renderVideo}
         keyExtractor={(item, index) => index.toString()}
         showsHorizontalScrollIndicator={false}
         horizontal={true}
         onScrollEndDrag={() => {
-          _getPlayList(
-            plId,
-            setPageToken(`pageToken=${playList.pageToken.nextPageToken}`),
-          );
+          !playList.pageToken.nextPageToken
+            ? {}
+            : _getPlayList(
+                plId,
+                setPageToken(`pageToken=${playList.pageToken.nextPageToken}`),
+              );
+          playList.pageToken.nextPageToken === state.pageToken.nextPageToken
+            ? {}
+            : dispatchList({type: 'next'});
         }}
       />
-      <View style={style.bannerHeader}>
-        <Text style={style.bannerTitle}>인기 강좌</Text>
-        <Text style={style.date}>"제코베에 인기있는 영상들을 모았어요"</Text>
-        <FlatList
-          data={state.moreList}
-          renderItem={renderVideo}
-          keyExtractor={(item, index) => index.toString()}
-          showsHorizontalScrollIndicator={false}
-          horizontal={true}
-          // onScrollEndDrag={() => {
-          //   _getPlayList(
-          //     plId,
-          //     setPageToken(`pageToken=${state.moreList.pageToken.nextPageToken}`),
-          //   );
-          //   dispatchList({type: 'next'});
-          // }}
-        />
-      </View>
-    </ScrollView>
+    </View>
   );
 };
 const style = StyleSheet.create({
@@ -188,4 +161,4 @@ const style = StyleSheet.create({
   },
 });
 
-export default MostVideoComponent;
+export default HomeVideoComponent;
